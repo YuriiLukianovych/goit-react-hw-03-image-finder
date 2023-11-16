@@ -1,0 +1,11 @@
+.galleryItem {
+  min-height: 100px;
+  background-color: var(--accent2);
+  flex-basis: calc((100% - 3 * 12px) / 4);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
