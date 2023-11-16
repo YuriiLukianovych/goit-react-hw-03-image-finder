@@ -8,19 +8,35 @@ import Button from 'components/Button';
 import Modal from 'components/Modal';
 
 export default class App extends Component {
+  state = {
+    isModalVisible: false,
+  };
+
+  openModal = () => {
+    this.setState({
+      isModalVisible: true,
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      isModalVisible: false,
+    });
+  };
+
   render() {
     return (
       <div className={css.app}>
         <Header />
         <div className={css.appBody}>
           <div className={`${css.container} container`}>
-            <ImageGallery />
+            <ImageGallery onOpenModal={this.openModal} />
             <Loader />
             <Button />
           </div>
         </div>
         <Footer />
-        <Modal />
+        {this.state.isModalVisible && <Modal onCloseModal={this.closeModal} />}
       </div>
     );
   }
