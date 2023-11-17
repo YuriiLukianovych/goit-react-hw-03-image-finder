@@ -14,25 +14,34 @@ export default class App extends Component {
     isLoadMoreButtonVisible: true,
     isLoading: false,
     galleryList: null,
-    selectedId: null,
+    selectedImageURL: null,
     searchQuery: null,
   };
 
   componentDidMount() {
-    this.getImages();
+    // this.getImages();
   }
 
-  openModal = id => {
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      this.state.searchQuery &&
+      prevState.searchQuery !== this.state.searchQuery
+    ) {
+      this.getImages();
+    }
+  }
+
+  openModal = largeImageURL => {
     this.setState({
       isModalVisible: true,
-      selectedId: id,
+      selectedImageURL: largeImageURL,
     });
   };
 
   closeModal = () => {
     this.setState({
       isModalVisible: false,
-      selectedId: null,
+      selectedImageURL: null,
     });
   };
 
@@ -41,12 +50,12 @@ export default class App extends Component {
       this.setState({
         isLoading: true,
       });
-      const images = await fetchImages();
+      const images = await fetchImages(this.state.searchQuery);
       this.setState({
-        galleryList: images,
+        galleryList: images.hits,
       });
 
-      console.log(images);
+      console.log('API -> ', images);
     } catch (error) {
     } finally {
       this.setState({
@@ -57,7 +66,10 @@ export default class App extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    console.log('event onSubmit', e.target.elements.search.value);
+    const searchQueryInput = e.target.elements.search.value;
+    this.setState({
+      searchQuery: searchQueryInput,
+    });
     e.target.reset();
   };
 
@@ -82,8 +94,7 @@ export default class App extends Component {
         <Footer />
         {this.state.isModalVisible && (
           <Modal
-            id={this.state.selectedId}
-            searchQuery={this.state.searchQuery}
+            imageURL={this.state.selectedImageURL}
             onCloseModal={this.closeModal}
           />
         )}

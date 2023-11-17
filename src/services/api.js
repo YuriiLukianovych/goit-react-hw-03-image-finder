@@ -1,8 +1,10 @@
 import axios from 'axios';
 
-const fetchImages = async () => {
+const API_KEY = '1719842-829ac206ae49bf14fe6b0938c';
+
+const fetchImages = async searchQuery => {
   const responce = await axios.get(
-    'https://jsonplaceholder.typicode.com/posts'
+    `https://pixabay.com/api/?q=${searchQuery}&page=2&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
   );
   return responce.data;
 };

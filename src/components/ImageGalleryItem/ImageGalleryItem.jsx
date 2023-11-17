@@ -2,11 +2,10 @@ import React from 'react';
 import css from './ImageGalleryItem.module.scss';
 
 function ImageGalleryItem({ image, onOpenModal }) {
-  const { id, title, body } = image;
+  const { webformatURL, largeImageURL, tags } = image;
   return (
-    <li className={css.galleryItem} onClick={() => onOpenModal(id)}>
-      <h4>{title}</h4>
-      <p>{body}</p>
+    <li className={css.galleryItem} onClick={() => onOpenModal(largeImageURL)}>
+      <img src={webformatURL} alt={tags} />
     </li>
   );
 }
