@@ -3,7 +3,7 @@
   outline: none;
   border: 1px solid transparent;
   padding: 8px 12px;
-  transition: background 300ms;
+  transition: 300ms;
   line-height: 1;
   background-color: #7b2f3d;
   color: #ffffff;
@@ -17,5 +17,10 @@
   &:hover,
   &:focus {
     background-color: #701c2b;
+  }
+  &:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: auto;
   }
 }

@@ -11,21 +11,19 @@ import fetchImages from './services/api';
 export default class App extends Component {
   state = {
     isModalVisible: false,
-    isLoadMoreButtonVisible: true,
     isLoading: false,
     galleryList: null,
     selectedImageURL: null,
     searchQuery: null,
+    page: 1,
+    totalHits: 0,
   };
-
-  componentDidMount() {
-    // this.getImages();
-  }
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      this.state.searchQuery &&
-      prevState.searchQuery !== this.state.searchQuery
+      (this.state.searchQuery &&
+        prevState.searchQuery !== this.state.searchQuery) ||
+      prevState.page !== this.state.page
     ) {
       this.getImages();
     }
@@ -50,12 +48,21 @@ export default class App extends Component {
       this.setState({
         isLoading: true,
       });
-      const images = await fetchImages(this.state.searchQuery);
-      this.setState({
-        galleryList: images.hits,
-      });
+      const images = await fetchImages(this.state.searchQuery, this.state.page);
 
-      console.log('API -> ', images);
+      if (this.state.galleryList) {
+        this.setState(prevState => {
+          return {
+            galleryList: [...prevState.galleryList, ...images.hits],
+            totalHits: images.totalHits,
+          };
+        });
+      } else {
+        this.setState({
+          galleryList: images.hits,
+          totalHits: images.totalHits,
+        });
+      }
     } catch (error) {
     } finally {
       this.setState({
@@ -67,27 +74,50 @@ export default class App extends Component {
   handleSubmit = e => {
     e.preventDefault();
     const searchQueryInput = e.target.elements.search.value;
+
+    if (this.state.searchQuery === searchQueryInput) {
+      return;
+    }
     this.setState({
       searchQuery: searchQueryInput,
+      galleryList: null,
+      page: 1,
     });
-    e.target.reset();
+
+    // e.target.reset();
+  };
+
+  loadMore = () => {
+    this.setState(prevState => {
+      return { page: prevState.page + 1 };
+    });
   };
 
   render() {
+    const isLoadMoreButtonVisible =
+      this.state.page < Math.ceil(this.state.totalHits / 12);
     return (
       <div className={css.app}>
         <Header handleSubmit={this.handleSubmit} />
         <div className={css.appBody}>
           <div className={`${css.container} container`}>
+            {/* Image Gallery */}
             {this.state.galleryList && (
               <ImageGallery
                 images={this.state.galleryList}
                 onOpenModal={this.openModal}
               />
             )}
+
+            {/* Loader */}
             {this.state.isLoading && <Loader />}
-            {this.state.isLoadMoreButtonVisible && this.state.galleryList && (
-              <Button />
+
+            {/* Button */}
+            {this.state.galleryList && (
+              <Button
+                onClick={this.loadMore}
+                disabled={!isLoadMoreButtonVisible}
+              />
             )}
           </div>
         </div>
