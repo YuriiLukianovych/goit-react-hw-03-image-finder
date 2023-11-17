@@ -2,11 +2,17 @@ import React from 'react';
 import css from './ImageGallery.module.scss';
 import ImageGalleryItem from 'components/ImageGalleryItem';
 
-function ImageGallery({ onOpenModal }) {
+function ImageGallery({ images, onOpenModal }) {
   return (
     <ul className={`${css.galleryList} list`}>
-      {[...Array(12).keys()].map(el => {
-        return <ImageGalleryItem onOpenModal={onOpenModal} />;
+      {images.map(img => {
+        return (
+          <ImageGalleryItem
+            key={img.id}
+            image={img}
+            onOpenModal={onOpenModal}
+          />
+        );
       })}
     </ul>
   );

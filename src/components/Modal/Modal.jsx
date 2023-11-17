@@ -27,6 +27,9 @@ export default class Modal extends Component {
       <div className={css.overlay} onClick={this.onOverlayClick}>
         <div className={css.modal}>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi, quos...
+          <span style={{ fontSize: '72px', fontWeight: '600', color: 'red' }}>
+            {this.props.id} - {this.props.searchQuery}
+          </span>
         </div>
       </div>
     );

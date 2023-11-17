@@ -3,7 +3,7 @@ import css from './Header.module.scss';
 import { ReactComponent as LogoIcon } from '../../assets/icons/search-svgrepo-com.svg';
 import Searchbar from 'components/Searchbar';
 
-function Header() {
+function Header({ handleSubmit }) {
   return (
     <div className={css.appHeader}>
       <div className={`${css.container} container`}>
@@ -14,7 +14,7 @@ function Header() {
             <span>Finder</span>
           </p>
         </a>
-        <Searchbar />
+        <Searchbar handleSubmit={handleSubmit} />
       </div>
     </div>
   );

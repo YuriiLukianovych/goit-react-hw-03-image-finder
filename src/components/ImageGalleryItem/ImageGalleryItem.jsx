@@ -1,13 +1,12 @@
 import React from 'react';
 import css from './ImageGalleryItem.module.scss';
 
-function ImageGalleryItem({ onOpenModal }) {
+function ImageGalleryItem({ image, onOpenModal }) {
+  const { id, title, body } = image;
   return (
-    <li className={css.galleryItem}>
-      <span>Lorem ipsum dolor sit amet.</span>
-      <button type="button" onClick={onOpenModal}>
-        Open Modal
-      </button>
+    <li className={css.galleryItem} onClick={() => onOpenModal(id)}>
+      <h4>{title}</h4>
+      <p>{body}</p>
     </li>
   );
 }
