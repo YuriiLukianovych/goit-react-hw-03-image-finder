@@ -7,7 +7,7 @@ import Loader from 'components/Loader';
 import Button from 'components/Button';
 import Modal from 'components/Modal';
 import fetchImages from './services/api';
-import ErrorDiv from 'components/ErrorDiv';
+import Notification from 'components/Notification';
 
 export default class App extends Component {
   state = {
@@ -89,6 +89,7 @@ export default class App extends Component {
       searchQuery: searchQueryInput,
       galleryList: null,
       page: 1,
+      error: null,
     });
 
     // e.target.reset();
@@ -112,6 +113,8 @@ export default class App extends Component {
     } = this.state;
 
     const isLoadMoreButtonVisible = page < Math.ceil(totalHits / 12);
+    const areImages = galleryList && galleryList.length ? true : false;
+    const nothingFound = galleryList && galleryList.length === 0;
 
     return (
       <div className={css.app}>
@@ -119,18 +122,26 @@ export default class App extends Component {
         <div className={css.appBody}>
           <div className={`${css.container} container`}>
             {/* Image Gallery */}
-            {galleryList && !error && (
+            {areImages && !error && (
               <ImageGallery images={galleryList} onOpenModal={this.openModal} />
             )}
 
             {/* Error Div */}
-            {error && <ErrorDiv errorMessage={error.message} />}
+            {error && <Notification status="error" message={error.message} />}
+
+            {/* Nothing Found */}
+            {nothingFound && (
+              <Notification
+                status="warning"
+                message="Nothing was found for your request. Please enter another request."
+              />
+            )}
 
             {/* Loader */}
             {isLoading && <Loader />}
 
             {/* Button */}
-            {galleryList && !error && (
+            {areImages && !error && (
               <Button
                 onClick={this.loadMore}
                 disabled={!isLoadMoreButtonVisible}

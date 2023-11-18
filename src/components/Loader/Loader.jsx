@@ -1,18 +1,16 @@
 import React from 'react';
-import { MagnifyingGlass } from 'react-loader-spinner';
+import { ThreeDots } from 'react-loader-spinner';
 
 function Loader() {
   return (
     <>
-      <MagnifyingGlass
-        visible={true}
+      <ThreeDots
         height="80"
         width="80"
-        ariaLabel="MagnifyingGlass-loading"
-        wrapperStyle={{}}
-        wrapperClass="MagnifyingGlass-wrapper"
-        glassColor="var(--yellow)"
+        radius="9"
         color="var(--accent)"
+        ariaLabel="three-dots-loading"
+        visible={true}
       />
     </>
   );
