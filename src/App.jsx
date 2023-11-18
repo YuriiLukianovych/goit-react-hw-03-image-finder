@@ -7,6 +7,7 @@ import Loader from 'components/Loader';
 import Button from 'components/Button';
 import Modal from 'components/Modal';
 import fetchImages from './services/api';
+import ErrorDiv from 'components/ErrorDiv';
 
 export default class App extends Component {
   state = {
@@ -17,6 +18,7 @@ export default class App extends Component {
     searchQuery: null,
     page: 1,
     totalHits: 0,
+    error: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -44,13 +46,15 @@ export default class App extends Component {
   };
 
   getImages = async () => {
+    const { searchQuery, page, galleryList } = this.state;
+
     try {
       this.setState({
         isLoading: true,
       });
-      const images = await fetchImages(this.state.searchQuery, this.state.page);
+      const images = await fetchImages(searchQuery, page);
 
-      if (this.state.galleryList) {
+      if (galleryList) {
         this.setState(prevState => {
           return {
             galleryList: [...prevState.galleryList, ...images.hits],
@@ -64,6 +68,9 @@ export default class App extends Component {
         });
       }
     } catch (error) {
+      this.setState({
+        error,
+      });
     } finally {
       this.setState({
         isLoading: false,
@@ -94,26 +101,36 @@ export default class App extends Component {
   };
 
   render() {
-    const isLoadMoreButtonVisible =
-      this.state.page < Math.ceil(this.state.totalHits / 12);
+    const {
+      totalHits,
+      page,
+      galleryList,
+      error,
+      isLoading,
+      isModalVisible,
+      selectedImageURL,
+    } = this.state;
+
+    const isLoadMoreButtonVisible = page < Math.ceil(totalHits / 12);
+
     return (
       <div className={css.app}>
         <Header handleSubmit={this.handleSubmit} />
         <div className={css.appBody}>
           <div className={`${css.container} container`}>
             {/* Image Gallery */}
-            {this.state.galleryList && (
-              <ImageGallery
-                images={this.state.galleryList}
-                onOpenModal={this.openModal}
-              />
+            {galleryList && !error && (
+              <ImageGallery images={galleryList} onOpenModal={this.openModal} />
             )}
 
+            {/* Error Div */}
+            {error && <ErrorDiv errorMessage={error.message} />}
+
             {/* Loader */}
-            {this.state.isLoading && <Loader />}
+            {isLoading && <Loader />}
 
             {/* Button */}
-            {this.state.galleryList && (
+            {galleryList && !error && (
               <Button
                 onClick={this.loadMore}
                 disabled={!isLoadMoreButtonVisible}
@@ -122,11 +139,8 @@ export default class App extends Component {
           </div>
         </div>
         <Footer />
-        {this.state.isModalVisible && (
-          <Modal
-            imageURL={this.state.selectedImageURL}
-            onCloseModal={this.closeModal}
-          />
+        {isModalVisible && (
+          <Modal imageURL={selectedImageURL} onCloseModal={this.closeModal} />
         )}
       </div>
     );
